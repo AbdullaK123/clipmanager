@@ -1,0 +1,20 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Specify PostgreSQL as the provider
+  url      = env("DATABASE_URL") // Loads the connection string from your .env file
+}
+
+// Define our KnowledgeClip model
+model KnowledgeClip {
+  id        String   @id @default(uuid()) // String ID, primary key, default to UUID
+  title     String
+  content   String
+  tags      String[] // PostgreSQL and Prisma support native string arrays!
+  createdAt DateTime @default(now())    // Automatically set on creation
+  updatedAt DateTime @updatedAt        // Automatically updated on modification
+}

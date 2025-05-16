@@ -9,8 +9,22 @@ export interface KnowledgeClip {
 export interface ClipCardProps {
     clip: KnowledgeClip;
     onRemove: (id: string) => void;
+    onShowUpdateForm: (id: string) => void;
 }
 
 export interface AddClipFormProps {
-    handleSubmit: (clip: KnowledgeClip) => void;
+    handleSubmit: (clip: Omit<KnowledgeClip, 'id'>) => void;
+    handleSubmitIfUpdating: (id: string, newClipInfo: Omit<KnowledgeClip, 'id'>) => void;
+    isUpdating: boolean;
+    selectedClip: KnowledgeClip | undefined | null;
+}
+
+export interface ModalProps {
+    children: React.ReactNode;
+    onClose: () => void;
+    isOpen: boolean;
+}
+
+export interface HeaderProps {
+    onShowAddForm: () => void;
 }

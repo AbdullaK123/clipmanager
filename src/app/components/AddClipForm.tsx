@@ -1,15 +1,30 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { KnowledgeClip, AddClipFormProps } from "../lib/interfaces";
-import { v4 } from 'uuid'
 
-export default function AddClipForm({handleSubmit}: AddClipFormProps) {
+export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUpdating, selectedClip }: AddClipFormProps) {
     const [clipInfo, setClipInfo] = useState<Omit<KnowledgeClip, 'id'>>({
         title: "",
         content: "",
         tags: []
     })
     const [tagContext, setTagContext] = useState<string>("")
+
+    useEffect(() => {
+        if (selectedClip && isUpdating) {
+            setClipInfo({
+                title: selectedClip.title,
+                content: selectedClip.content,
+                tags: selectedClip.tags
+            })
+        } else if (!isUpdating) {
+            setClipInfo({
+                title: "",
+                content: "",
+                tags: []
+            })
+        }
+    }, [selectedClip, isUpdating])
 
     const handleOnTitleOrContentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setClipInfo({
@@ -48,7 +63,12 @@ export default function AddClipForm({handleSubmit}: AddClipFormProps) {
     }
 
     const handleOnSubmit = () => {
-        handleSubmit({...clipInfo, id: v4()})
+        console.log(`Submitting in ${isUpdating ? 'UPDATE' : 'ADD'} mode. Data:`, JSON.stringify(clipInfo, null, 2));
+        if (isUpdating) {
+            handleSubmitIfUpdating(selectedClip.id, clipInfo)
+        } else { 
+            handleSubmit(clipInfo)
+        }
         setTagContext("")
         setClipInfo({
             title: "",
@@ -58,7 +78,7 @@ export default function AddClipForm({handleSubmit}: AddClipFormProps) {
     }
 
     return (
-        <div className='flex flex-col items-center justify-center gap-4 p-4 border border-gray-500 rounded-lg shadow-md m-4 min-w-[320px]'>
+        <div className='bg-white flex flex-col items-center justify-center gap-4 p-4 border border-gray-500 rounded-lg shadow-md m-4 min-w-[320px] '>
             <h1 className="text-3xl font-bold">Add a Clip!</h1>
             <div className="flex flex-col gap-4 p-4 w-full">
                 <label htmlFor="title" >Title: </label>
@@ -119,7 +139,7 @@ export default function AddClipForm({handleSubmit}: AddClipFormProps) {
                 className="w-full cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
                 onClick={() => handleOnSubmit()}
             >
-                Add Clip
+                {isUpdating ? "Update" : "Add"}
             </button>
         </div>
     )
