@@ -1,13 +1,27 @@
+// app/lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
 
 declare global {
-    var prisma : PrismaClient | undefined
+    // eslint-disable-next-line no-var
+    var prisma: PrismaClient | undefined;
 }
 
-const primsaInstance = globalThis.prisma || new PrismaClient();
+console.log("[prisma.ts] Initializing Prisma Client module...");
+console.log("[prisma.ts] Current globalThis.prisma:", typeof globalThis.prisma);
+
+const prismaInstance = globalThis.prisma || new PrismaClient({
+    // You can add logs here to see when new PrismaClient() is called
+    // log: ['query', 'info', 'warn', 'error'], 
+});
+
+console.log("[prisma.ts] prismaInstance created/reused. Type:", typeof prismaInstance);
 
 if (process.env.NODE_ENV !== "production") {
-    globalThis.prisma = primsaInstance
+    if (!globalThis.prisma) {
+        console.log("[prisma.ts] Setting new instance to globalThis.prisma in development.");
+    }
+    globalThis.prisma = prismaInstance;
 }
 
-export const db = primsaInstance;
+console.log("[prisma.ts] Exporting 'db'. Type:", typeof prismaInstance);
+export const db = prismaInstance; // Exporting 'prismaInstance' (corrected typo) as 'db'

@@ -25,6 +25,13 @@ export interface ModalProps {
     isOpen: boolean;
 }
 
+export interface RegisterFormInput {
+    name?: string
+    email: string
+    password: string
+    confirmedPassword: string
+}
+
 export interface HeaderProps {
     onShowAddForm: () => void;
 }
