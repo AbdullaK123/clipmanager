@@ -3,13 +3,6 @@ import { db } from '@/app/lib/prisma'
 import bcrypt from "bcryptjs";
 import { passwordStrength } from "check-password-strength";
 
-console.log("[Register API Route] Imported 'db' type:", typeof db); // Check what 'db' is here
-if (db) {
-    console.log("[Register API Route] 'db' object keys:", Object.keys(db));
-} else {
-    console.log("[Register API Route] 'db' is undefined or null!");
-}
-
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export async function POST(request: NextRequest) {
