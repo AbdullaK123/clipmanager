@@ -2,14 +2,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/app/lib/prisma';
 import { getServerSession } from 'next-auth/next';
-import { handler } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/lib/auth';
 
 export async function PUT(
     request: NextRequest,
     { params } : { params: { id: string }}
 ) {
     // Get user session
-    const session = await getServerSession(handler);
+    const session = await getServerSession(authOptions);
+    const { id } = await params
     
     if (!session || !session.user) {
         return NextResponse.json(
@@ -19,7 +20,7 @@ export async function PUT(
     }
 
     try { 
-        const idToUpdate = params.id;
+        const idToUpdate = id;
         if (!idToUpdate) {
             return NextResponse.json(
                 {"message": "No id provided"},
@@ -78,7 +79,8 @@ export async function DELETE(
     { params }: { params: { id: string }}
 ) {
     // Get user session
-    const session = await getServerSession(handler);
+    const session = await getServerSession(authOptions);
+    const { id } = await params
     
     if (!session || !session.user) {
         return NextResponse.json(
@@ -88,7 +90,7 @@ export async function DELETE(
     }
     
     try {
-        const idToDelete = params.id;
+        const idToDelete = id;
         if (!idToDelete) {
             return NextResponse.json(
                 {"message": "No id provided"},

@@ -79,7 +79,7 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
 
     return (
         <div className='bg-white flex flex-col items-center justify-center gap-4 p-4 border border-gray-500 rounded-lg shadow-md m-4 min-w-[320px] '>
-            <h1 className="text-3xl font-bold">Add a Clip!</h1>
+            <h1 className="text-3xl font-bold">{isUpdating ? "Updating Clip!" : "Add a Clip!"}</h1>
             <div className="flex flex-col gap-4 p-4 w-full">
                 <label htmlFor="title" >Title: </label>
                 <input

@@ -5,26 +5,19 @@ import Header from "./components/Header";
 import { KnowledgeClip } from "./lib/interfaces";
 import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRequireAuth } from './lib/auth-utils';
 
 export default function Home() {
-
+  // This will redirect to login if not authenticated
+  const { session, status } = useRequireAuth();
   const [clips, setClips] = useState<KnowledgeClip[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [selectedClip, setSelectedClip] = useState<KnowledgeClip | null>(null);
-  const { data: session, status } = useSession();
-  const router = useRouter();
 
+  // Fetch clips when session is available
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-    }
-  }, [status, router])
-
-  useEffect(() => {
-    if (status === 'authenticated') {   
+    if (status === 'authenticated') {
       const fetchData = async () => {
         try {
           const response = await fetch('/api/clips')
@@ -45,16 +38,15 @@ export default function Home() {
           return
         }
       }
+
       fetchData()
     }
   }, [status])
 
   const onAddClip = async (clip: Omit<KnowledgeClip,'id'> ) => {
-
     if (status !== 'authenticated') {
-      alert('You must be logged in to add a clip')
-      router.push('/login')
-      return
+      alert("You must be logged in to add clips");
+      return;
     }
 
     if (clip.title.trim() === "") {
@@ -78,39 +70,39 @@ export default function Home() {
         },
         body: JSON.stringify(clip)
       })
-      const responseData = await response.json()
-      response.ok ? setClips((prevClips) => [...prevClips, responseData.clip]) : (() => {
-        alert(`Failed to add clip: ${responseData.message || 'Unknown API error'}`);
-      })()
-      setIsModalVisible((prev) => !prev)
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Failed to add clip: ${errorData.message || 'Unknown error'}`);
+        return;
+      }
+      
+      const responseData = await response.json();
+      setClips((prevClips) => [...prevClips, responseData.clip]);
+      setIsModalVisible(false);
     } catch(err) {
-      console.log('API call failed: \n\n', err)
-      return
+      console.error('API call failed: ', err);
+      alert(`Failed to add clip: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
   const onRemoveClip = async (id: string) => {
     try {
-
-      if (status !== 'authenticated') {
-        alert('You must be logged in to add a clip')
-        router.push('/login')
-        return
-      }
-
       const response = await fetch(`/api/clips/${id}`, {
         'method': 'DELETE'
       })
-      response.ok ? setClips((prevClips) => prevClips.filter((clip) => clip.id !== id)) : (async () => {
+      if (response.ok) {
+        setClips((prevClips) => prevClips.filter((clip) => clip.id !== id));
+      } else {
         try {
           const errMessage = await response.json();
-          console.error(`Failed to delete clip: ${errMessage.message || 'Unknown API error'}`)
-          alert(`Failed to delete clip: ${errMessage.message || 'Unknown API error'}`)
+          console.error(`Failed to delete clip: ${errMessage.message || 'Unknown API error'}`);
+          alert(`Failed to delete clip: ${errMessage.message || 'Unknown API error'}`);
         } catch(err) {
-          console.error('Failed to parse json response: \n\n', err)
-          alert('Failed to parse json response')
+          console.error('Failed to parse json response: \n\n', err);
+          alert('Failed to parse json response');
         }
-      })()
+      }
     } catch(err) {
       console.log('API call failed: \n\n', err)
       return
@@ -119,13 +111,6 @@ export default function Home() {
 
   const onUpdateClip = async (id: string, newClipInfo: Omit<KnowledgeClip, 'id'>) => {
       try {
-
-          if (status !== 'authenticated') {
-            alert('You must be logged in to add a clip')
-            router.push('/login')
-            return
-          }
-
           console.log(`[onUpdateClip] Sending PUT for ID: ${id} with data:`, JSON.stringify(newClipInfo, null, 2));
           const response = await fetch(`/api/clips/${id}`, {
               method: 'PUT',
@@ -133,31 +118,15 @@ export default function Home() {
               body: JSON.stringify(newClipInfo)
           });
 
-          // Log #1: The raw text of the response
-          const responseText = await response.clone().text(); // Clone because .text() and .json() consume the body
-          console.log("[onUpdateClip] Raw API response text:", responseText);
-          
-          // Log #2: Status and ok status
-          console.log("[onUpdateClip] API response status:", response.status);
-          console.log("[onUpdateClip] API response OK:", response.ok);
-
           // Now try to parse as JSON
           const responseData = await response.json(); 
           
-          // Log #3: The fully parsed JSON object
-          console.log("[onUpdateClip] Parsed API response data (responseData):", JSON.stringify(responseData, null, 2));
-          
-          // Log #4: Your original log for data.clip
-          console.log("[onUpdateClip] Accessing responseData.clip directly (your 'Clip received:' log):", JSON.stringify(responseData.clip, null, 2));
-
           if (response.ok && responseData.clip) {
               console.log("[onUpdateClip] Response is OK and responseData.clip is truthy. Updating state.");
               setClips((prevClips) => {
                   const clipIndexToUpdate = prevClips.findIndex((c) => c.id === id);
                   if (clipIndexToUpdate === -1) {
                       console.error("[onUpdateClip] Clip to update not found in client state after successful API call. This indicates a sync issue or incorrect ID.");
-                      // To prevent errors, you might want to refetch all clips or handle this more gracefully
-                      // For now, we'll just return prevClips to avoid breaking the map function
                       return prevClips; 
                   }
                   const updatedClips = [...prevClips];
@@ -190,11 +159,13 @@ export default function Home() {
 
   const onShowAddForm = () => {
     setSelectedClip(null)
+    setIsUpdating(false)
     setIsModalVisible(true)
   }
 
+  // Show loading state when checking authentication
   if (status === 'loading') {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   return (
@@ -231,6 +202,5 @@ export default function Home() {
         }) : <p>No clips yet...</p>}
       </div>
     </>
-    
   );
 }

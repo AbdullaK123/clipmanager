@@ -1,56 +1,59 @@
 'use client'
-import { HeaderProps } from "../lib/interfaces"
-import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export default function Header({ onShowAddForm } : HeaderProps) {
-
-    const { data: session, status} = useSession();
-
-    const handleLogout = () => {
-        signOut({
-            'callbackUrl': '/login'
-        })
-    }
-
-
+export default function Header({ onShowAddForm } : { onShowAddForm: () => void }) {
+    const { data: session, status } = useSession();
+    const router = useRouter();
+    
+    const handleLoginClick = () => {
+        router.push('/login');
+    };
+    
+    const handleRegisterClick = () => {
+        router.push('/register');
+    };
+    
+    const handleLogoutClick = () => {
+        signOut({ callbackUrl: '/login' });
+    };
+    
     return (
         <nav className="mb-8 p-4 bg-white flex flex-row justify-between items-center shadow-md sticky top-0">
             <h1 className="text-xl font-bold">
                 Clip Manager
             </h1>
-            <div className="flex flex-row gap-4">
-                {(status === 'authenticated') ? (
+            <div className="flex flex-row gap-4 items-center">
+                {status === 'authenticated' ? (
                     <>
-                        <span className="p-4"> Welcome, {session?.user?.name}!</span>
-                        <button 
-                            className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300" 
-                            onClick={handleLogout}
-                        >
-                            Logout
-                        </button>
+                        <span className="p-2">Welcome, {session.user.name || session.user.email}</span>
                         <button 
                             className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
                             onClick={onShowAddForm}
                         >
                             Add Clip
                         </button>
+                        <button 
+                            className="cursor-pointer p-4 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300"
+                            onClick={handleLogoutClick}
+                        >
+                            Logout
+                        </button>
                     </>
-
                 ) : (
                     <>
-                        <Link 
-                            href='/login' 
-                            className="p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                        <button 
+                            className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                            onClick={handleLoginClick}
                         >
                             Login
-                        </Link>
-                        <Link 
-                            href='/register' 
-                            className="p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                        </button>
+                        <button 
+                            className="cursor-pointer p-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-colors duration-300"
+                            onClick={handleRegisterClick}
                         >
                             Register
-                        </Link>
+                        </button>
                     </>
                 )}
             </div>

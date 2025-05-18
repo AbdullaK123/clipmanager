@@ -3,6 +3,7 @@ import React, { useState, FormEvent } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { LoginFormInput } from '@/app/lib/interfaces'
+import Header from '../components/Header'
 
 export default function LoginPage() {
     const [loginData, setLoginData] = useState<LoginFormInput>({
@@ -80,43 +81,46 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="border border-gray-500 rounded-lg shadow-md mt-10 p-6 flex flex-col items-center justify-center mx-auto w-min-[320px] w-1/4 h-3/5">
-            <h1 className='text-3xl font-bold'>Login</h1>
-            <div className='flex flex-col gap-4 p-4 w-full'>
-                <label htmlFor="email">Email: </label>
-                <input 
-                    type='email'
-                    id='email'
-                    name='email'
-                    className='p-4 border rounded-lg shadow-md border-blue-500'
-                    value={loginData.email}
-                    onChange={handleOnChange}
-                    placeholder='Email...'
-                />
+        <>
+            <Header onShowAddForm={() => {}}/>
+            <div className="border border-gray-500 rounded-lg shadow-md mt-10 p-6 flex flex-col items-center justify-center mx-auto w-min-[320px] w-1/4 h-3/5">
+                <h1 className='text-3xl font-bold'>Login</h1>
+                <div className='flex flex-col gap-4 p-4 w-full'>
+                    <label htmlFor="email">Email: </label>
+                    <input 
+                        type='email'
+                        id='email'
+                        name='email'
+                        className='p-4 border rounded-lg shadow-md border-blue-500'
+                        value={loginData.email}
+                        onChange={handleOnChange}
+                        placeholder='Email...'
+                    />
+                </div>
+                <div className='flex flex-col gap-4 p-4 w-full'>
+                    <label htmlFor="password">Password: </label>
+                    <input 
+                        type='password'
+                        id='password'
+                        name='password'
+                        className='p-4 border rounded-lg shadow-md border-blue-500'
+                        value={loginData.password}
+                        onChange={handleOnChange}
+                        placeholder='Password...'
+                    />
+                </div>
+                <button
+                    className="w-full cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                    onClick={handleFormSubmit}
+                >
+                    Login
+                </button>
+                <div className="mt-4 text-center h-6"> {/* Fixed height for message area to prevent layout shift */}
+                    {successMessage && getSuccessSpan(successMessage)}
+                    {isError && getErrorSpan(errorMessage)}
+                </div>
             </div>
-            <div className='flex flex-col gap-4 p-4 w-full'>
-                <label htmlFor="password">Password: </label>
-                <input 
-                    type='password'
-                    id='password'
-                    name='password'
-                    className='p-4 border rounded-lg shadow-md border-blue-500'
-                    value={loginData.password}
-                    onChange={handleOnChange}
-                    placeholder='Password...'
-                />
-            </div>
-            <button
-                className="w-full cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
-                onClick={handleFormSubmit}
-            >
-                Login
-            </button>
-            <div className="mt-4 text-center h-6"> {/* Fixed height for message area to prevent layout shift */}
-                {successMessage && getSuccessSpan(successMessage)}
-                {isError && getErrorSpan(errorMessage)}
-            </div>
-        </div>
+        </>
     )
 
 }
