@@ -5,6 +5,8 @@ import Header from "./components/Header";
 import { KnowledgeClip } from "./lib/interfaces";
 import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
 
@@ -12,35 +14,48 @@ export default function Home() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [selectedClip, setSelectedClip] = useState<KnowledgeClip | null>(null);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/clips')
-        if (!response.ok) {
-          console.error('Failed to fetch clips: ', response.status)
-          return
-        }
-        const data = await response.json();
-        console.log(JSON.stringify(data, null, 2))
-        if (data && data.clips) {
-          setClips(data.clips)
-        } else {
-          console.error('Clips are not in the expected format', data)
-          return
-        }
-      } catch (err) {
-        alert(`Failed to fetch clips ${err instanceof Error ? err.message : String(err)}`)
-        return
-      }
+    if (status === 'unauthenticated') {
+      router.push('/login')
     }
+  }, [status, router])
 
-    fetchData()
-
-  }, [])
+  useEffect(() => {
+    if (status === 'authenticated') {   
+      const fetchData = async () => {
+        try {
+          const response = await fetch('/api/clips')
+          if (!response.ok) {
+            console.error('Failed to fetch clips: ', response.status)
+            return
+          }
+          const data = await response.json();
+          console.log(JSON.stringify(data, null, 2))
+          if (data && data.clips) {
+            setClips(data.clips)
+          } else {
+            console.error('Clips are not in the expected format', data)
+            return
+          }
+        } catch (err) {
+          alert(`Failed to fetch clips ${err instanceof Error ? err.message : String(err)}`)
+          return
+        }
+      }
+      fetchData()
+    }
+  }, [status])
 
   const onAddClip = async (clip: Omit<KnowledgeClip,'id'> ) => {
+
+    if (status !== 'authenticated') {
+      alert('You must be logged in to add a clip')
+      router.push('/login')
+      return
+    }
 
     if (clip.title.trim() === "") {
       alert("Clip title can not be empty!")
@@ -76,6 +91,13 @@ export default function Home() {
 
   const onRemoveClip = async (id: string) => {
     try {
+
+      if (status !== 'authenticated') {
+        alert('You must be logged in to add a clip')
+        router.push('/login')
+        return
+      }
+
       const response = await fetch(`/api/clips/${id}`, {
         'method': 'DELETE'
       })
@@ -97,6 +119,13 @@ export default function Home() {
 
   const onUpdateClip = async (id: string, newClipInfo: Omit<KnowledgeClip, 'id'>) => {
       try {
+
+          if (status !== 'authenticated') {
+            alert('You must be logged in to add a clip')
+            router.push('/login')
+            return
+          }
+
           console.log(`[onUpdateClip] Sending PUT for ID: ${id} with data:`, JSON.stringify(newClipInfo, null, 2));
           const response = await fetch(`/api/clips/${id}`, {
               method: 'PUT',
@@ -162,6 +191,10 @@ export default function Home() {
   const onShowAddForm = () => {
     setSelectedClip(null)
     setIsModalVisible(true)
+  }
+
+  if (status === 'loading') {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
   }
 
   return (

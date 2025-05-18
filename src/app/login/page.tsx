@@ -39,6 +39,12 @@ export default function LoginPage() {
         setErrorMessage('');
         setSuccessMessage('');
 
+        if (loginData.email.trim() === '' || loginData.password.trim() === '') {
+            setIsError(true);
+            setErrorMessage('Email and password are required.');
+            return;
+        }
+
         console.log('Logging in with data:', JSON.stringify(loginData, null, 2));
         try {
             const result = await signIn('credentials', {
@@ -74,7 +80,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="border border-gray-500 rounded-lg shadow-md mt-10 p-4 flex flex-col items-center justify-center mx-auto w-1/2 h-3/5">
+        <div className="border border-gray-500 rounded-lg shadow-md mt-10 p-6 flex flex-col items-center justify-center mx-auto w-min-[320px] w-1/4 h-3/5">
             <h1 className='text-3xl font-bold'>Login</h1>
             <div className='flex flex-col gap-4 p-4 w-full'>
                 <label htmlFor="email">Email: </label>
@@ -106,8 +112,10 @@ export default function LoginPage() {
             >
                 Login
             </button>
-            {successMessage && getSuccessSpan(successMessage)}
-            {isError && getErrorSpan(errorMessage)}
+            <div className="mt-4 text-center h-6"> {/* Fixed height for message area to prevent layout shift */}
+                {successMessage && getSuccessSpan(successMessage)}
+                {isError && getErrorSpan(errorMessage)}
+            </div>
         </div>
     )
 
