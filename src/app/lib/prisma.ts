@@ -10,8 +10,7 @@ console.log("[prisma.ts] Initializing Prisma Client module...");
 console.log("[prisma.ts] Current globalThis.prisma:", typeof globalThis.prisma);
 
 const prismaInstance = globalThis.prisma || new PrismaClient({
-    // You can add logs here to see when new PrismaClient() is called
-    // log: ['query', 'info', 'warn', 'error'], 
+    log: ['query', 'info', 'warn', 'error'],
 });
 
 console.log("[prisma.ts] prismaInstance created/reused. Type:", typeof prismaInstance);
