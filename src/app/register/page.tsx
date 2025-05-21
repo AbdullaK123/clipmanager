@@ -88,7 +88,7 @@ export default function RegisterPage() {
     return (
         <>
             <Header onShowAddForm={() => {}}/>
-            <div className="border border-gray-500 rounded-lg shadow-md mt-10 p-4 flex flex-col items-center justify-center mx-auto w-1/2 h-3/5">
+            <div className="border border-gray-500 rounded-lg shadow-md mt-10 p-4 flex flex-col items-center justify-center mx-auto w-1/4 h-3/5">
                 <h1 className='text-3xl font-bold'>Register</h1>
                 <div className='flex flex-col gap-4 p-4 w-full'>
                     <label htmlFor='name'>Name: </label>

@@ -173,7 +173,7 @@ export default function Home() {
       <Header 
         onShowAddForm={onShowAddForm}
       />
-      <div className='flex flex-col items-center justify-center gap-4'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center gap-4 p-6'>
         <Modal
           isOpen={isModalVisible}
           onClose={() => setIsModalVisible(false)}

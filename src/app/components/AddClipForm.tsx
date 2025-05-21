@@ -1,6 +1,26 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { KnowledgeClip, AddClipFormProps } from "../lib/interfaces";
+import '@mdxeditor/editor/style.css'
+import {
+  headingsPlugin,
+  listsPlugin,
+  quotePlugin,
+  thematicBreakPlugin,
+  toolbarPlugin,
+  codeBlockPlugin,
+  BlockTypeSelect, 
+  markdownShortcutPlugin,
+  BoldItalicUnderlineToggles, 
+  codeMirrorPlugin,
+  InsertCodeBlock,
+  InsertImage,
+  CreateLink, 
+  ListsToggle,
+  MDXEditor,
+  MDXEditorMethods
+} from '@mdxeditor/editor'
+
 
 export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUpdating, selectedClip }: AddClipFormProps) {
     const [clipInfo, setClipInfo] = useState<Omit<KnowledgeClip, 'id'>>({
@@ -9,6 +29,7 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
         tags: []
     })
     const [tagContext, setTagContext] = useState<string>("")
+    const editorRef = useRef<MDXEditorMethods | null>(null);
 
     useEffect(() => {
         if (selectedClip && isUpdating) {
@@ -25,6 +46,47 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
             })
         }
     }, [selectedClip, isUpdating])
+
+    useEffect(() => {
+        if (isUpdating && selectedClip && editorRef.current) {
+            editorRef.current.setMarkdown(selectedClip.content || '')
+        }
+    }, [isUpdating, selectedClip])
+
+    const editorPlugins = useMemo(() => {
+        return [
+                headingsPlugin(),
+                listsPlugin(),
+                quotePlugin(),
+                thematicBreakPlugin(),
+                markdownShortcutPlugin(),
+                codeBlockPlugin({
+                    defaultCodeBlockLanguage: 'py'   
+                }),
+                codeMirrorPlugin({
+                    codeBlockLanguages: {
+                    js: 'JavaScript',
+                    ts: 'TypeScript',
+                    py: 'Python',
+                    sql: 'SQL',
+                    sh: 'Bash',
+                    },
+                    autoLoadLanguageSupport: true 
+                }),
+                toolbarPlugin({
+                    toolbarContents: () => (
+                            <>
+                                <BlockTypeSelect/>
+                                <BoldItalicUnderlineToggles/>
+                                <ListsToggle/>
+                                <CreateLink/>
+                                <InsertCodeBlock/>
+                                <InsertImage/>
+                            </>
+                        )
+                })
+            ]
+    }, [])
 
     const handleOnTitleOrContentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setClipInfo({
@@ -64,7 +126,7 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
 
     const handleOnSubmit = () => {
         console.log(`Submitting in ${isUpdating ? 'UPDATE' : 'ADD'} mode. Data:`, JSON.stringify(clipInfo, null, 2));
-        if (isUpdating) {
+        if (isUpdating && selectedClip) {
             handleSubmitIfUpdating(selectedClip.id, clipInfo)
         } else { 
             handleSubmit(clipInfo)
@@ -75,10 +137,11 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
             content: "",
             tags: []
         })
+        editorRef.current?.setMarkdown('')
     }
 
     return (
-        <div className='bg-white flex flex-col items-center justify-center gap-4 p-4 border border-gray-500 rounded-lg shadow-md m-4 min-w-[320px] '>
+        <div className='max-h-screen overflow-scroll bg-white flex flex-col items-center justify-center gap-4 p-4 border border-gray-500 rounded-lg shadow-md m-4 min-w-[320px] w-[640px] '>
             <h1 className="text-3xl font-bold">{isUpdating ? "Updating Clip!" : "Add a Clip!"}</h1>
             <div className="flex flex-col gap-4 p-4 w-full">
                 <label htmlFor="title" >Title: </label>
@@ -93,14 +156,16 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
                 />
             </div>
             <div className="flex flex-col gap-4 p-4 w-full">
-                <label htmlFor="content" >Content: </label>
-                <textarea
-                    id="content"
-                    name="content"
-                    value={clipInfo.content}
-                    className='pt-2 pb-4 p-4 border rounded-lg shadow-md border-blue-500'
-                    onChange={handleOnTitleOrContentChange}
-                    placeholder="Content..."
+                <MDXEditor
+                    markdown={""}
+                    ref={editorRef}
+                    plugins={editorPlugins}
+                    onChange={(newMarkdown) => {
+                        setClipInfo((prev) => ({...prev, content: newMarkdown}))
+                    }}
+                    className="min-h-[200px] border rounded-lg p-2 shadow-sm border-gray-300 focus-within:border-blue-500 focus-within:ring-blue-500"
+                    contentEditableClassName="prose"
+                    placeholder="Enter your clip content in Markdown..."
                 />
             </div>
             <div className="flex flex-col gap-4 p-4 w-full">
@@ -136,7 +201,7 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
                 </div>
             </div>
             <button 
-                className="w-full cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                className={`w-full ${clipInfo.title.trim() ? 'cursor-pointer' : 'bg-gray-400 cursor-not-allowed'} p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300`}
                 onClick={() => handleOnSubmit()}
             >
                 {isUpdating ? "Update" : "Add"}
