@@ -23,6 +23,7 @@
     "@types/mdx": "^2.0.13",
     "bcryptjs": "^3.0.2",
     "check-password-strength": "^3.0.0",
+    "flexsearch": "^0.8.201",
     "next": "15.3.2",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",

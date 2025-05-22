@@ -1,8 +1,10 @@
 'use client'
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { HeaderProps } from "../lib/interfaces";
+import SearchBar from "./SearchBar";
 
-export default function Header({ onShowAddForm } : { onShowAddForm: () => void }) {
+export default function Header({ onShowAddForm, onSearch } : HeaderProps) {
     const { data: session, status } = useSession();
     const router = useRouter();
     
@@ -23,6 +25,7 @@ export default function Header({ onShowAddForm } : { onShowAddForm: () => void }
             <h1 className="text-xl font-bold">
                 Clip Manager
             </h1>
+            <SearchBar onSearch={onSearch} />
             <div className="flex flex-row gap-4 items-center">
                 {status === 'authenticated' ? (
                     <>

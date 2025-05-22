@@ -6,6 +6,8 @@ import { KnowledgeClip } from "./lib/interfaces";
 import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
 import { useRequireAuth } from './lib/auth-utils';
+import { Document } from "flexsearch"
+import { title } from "process";
 
 export default function Home() {
   // This will redirect to login if not authenticated
@@ -13,7 +15,9 @@ export default function Home() {
   const [clips, setClips] = useState<KnowledgeClip[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [index, setIndex] = useState<Document | null>(null);
   const [selectedClip, setSelectedClip] = useState<KnowledgeClip | null>(null);
+  const [filteredClips, setFilteredClips] = useState<KnowledgeClip[]>([]);
 
   // Fetch clips when session is available
   useEffect(() => {
@@ -26,7 +30,6 @@ export default function Home() {
             return
           }
           const data = await response.json();
-          console.log(JSON.stringify(data, null, 2))
           if (data && data.clips) {
             setClips(data.clips)
           } else {
@@ -42,6 +45,41 @@ export default function Home() {
       fetchData()
     }
   }, [status])
+
+
+  useEffect(() => {
+
+    if (clips.length > 0) {
+      const searchIndex = new Document({
+        document: {
+          id: "id",
+          index: ["title", "content", "tags"]
+        }
+      })
+
+      clips.forEach((clip) => {
+        searchIndex.add({
+          id: clip.id,
+          title: clip.title,
+          content: clip.content,
+          tags: clip.tags.join(' ')
+        })
+      })
+
+      setIndex(searchIndex)
+    }
+
+  }, [clips])
+
+  const onSearch = (query:string) => {
+
+    const results = index?.search(query)
+
+    const matches = results?.forEach((result) => result.result)
+
+    console.log(matches)
+
+  }
 
   const onAddClip = async (clip: Omit<KnowledgeClip,'id'> ) => {
     if (status !== 'authenticated') {
@@ -172,6 +210,7 @@ export default function Home() {
     <>
       <Header 
         onShowAddForm={onShowAddForm}
+        onSearch={onSearch}
       />
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center gap-4 p-6'>
         <Modal
@@ -190,7 +229,6 @@ export default function Home() {
           </div>
         </Modal>
         {(clips.length > 0) ? clips.map((clip) => {
-          console.log(`Clip: \n ${JSON.stringify(clip, null, 2)}`)
           return (
             <ClipCard
               key={clip.id}
