@@ -7,7 +7,8 @@ export default function ClipCard({clip, onRemove, onShowUpdateForm}: ClipCardPro
 
     return (
         <div className={cx([
-            'flex flex-col items-stretch',
+            styles['flex-col-container'],
+            styles['items-stretched'],
             styles['space-md'],
             styles['card-base'],
             styles['card-elevated']

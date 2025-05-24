@@ -143,7 +143,15 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
     }
 
     return (
-        <div className='max-h-screen overflow-scroll bg-white flex flex-col items-center justify-center gap-4 p-4 border border-gray-500 rounded-lg shadow-md m-4 min-w-[320px] w-[640px] '>
+        <div className={cx([
+            styles['flex-col-container'],
+            styles['items-centered'],
+            'max-h-screen',
+            'overflow-y-scroll',
+            'min-w-[320px]',
+            'w-[640px]',
+            styles['card-base']
+        ])}>
             <h1 className="text-3xl font-bold">{isUpdating ? "Updating Clip!" : "Add a Clip!"}</h1>
             <div className="flex flex-col gap-4 p-4 w-full">
                 <label htmlFor="title" >Title: </label>

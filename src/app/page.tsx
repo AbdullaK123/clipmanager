@@ -7,8 +7,6 @@ import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
 import { useRequireAuth } from './lib/auth-utils';
 import { Document } from "flexsearch"
-import { title } from "process";
-import { AnyARecord } from "dns";
 
 export default function Home() {
   // This will redirect to login if not authenticated

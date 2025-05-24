@@ -15,5 +15,8 @@
     "space-sm": "gap-4", 
     "space-md": "gap-8",
     "space-lg": "gap-16",
-    "space-xl": "gap-32"
+    "space-xl": "gap-32",
+    "flex-col-container": "flex flex-col",
+    "items-centered": "items-center justify-center",
+    "items-stretched": "items-stretch"
 }
