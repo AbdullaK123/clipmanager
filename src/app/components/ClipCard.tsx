@@ -1,5 +1,6 @@
 import { ClipCardProps } from '@/app/lib/interfaces';
 import ReactMarkdown from 'react-markdown'
+import styles from '@/app/styles/styles.json'
 
 export default function ClipCard({clip, onRemove, onShowUpdateForm}:ClipCardProps) {
 
@@ -8,13 +9,15 @@ export default function ClipCard({clip, onRemove, onShowUpdateForm}:ClipCardProp
             <div className='flex justify-end'>
                 <div className='flex flex-row gap-4 items-center'>
                     <button 
-                        className='cursor-pointer p-1.5 font-bold bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300'
+                        // className='cursor-pointer p-1.5 font-bold bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300'
+                        className={styles['btn-secondary']}
                         onClick={() => onShowUpdateForm(clip.id)}
                     >
                         Update
                     </button>
                     <button 
-                        className='cursor-pointer p-1.5 font-bold bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300'
+                        // className='cursor-pointer p-1.5 font-bold bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300'
+                        className={styles['btn-danger']}
                         onClick={() => onRemove(clip.id)}
                     >
                         Delete

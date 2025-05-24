@@ -3,8 +3,11 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { HeaderProps } from "../lib/interfaces";
 import SearchBar from "./SearchBar";
+import styles from '@/app/styles/styles.json'
+import { usePathname } from "next/navigation";
 
 export default function Header({ onShowAddForm, onSearch } : HeaderProps) {
+    const path = usePathname();
     const { data: session, status } = useSession();
     const router = useRouter();
     
@@ -25,19 +28,21 @@ export default function Header({ onShowAddForm, onSearch } : HeaderProps) {
             <h1 className="text-xl font-bold">
                 Clip Manager
             </h1>
-            <SearchBar onSearch={onSearch} />
+            {(path === "/") && <SearchBar onSearch={onSearch} />}
             <div className="flex flex-row gap-4 items-center">
                 {status === 'authenticated' ? (
                     <>
                         <span className="p-2">Welcome, {session.user.name || session.user.email}</span>
                         <button 
-                            className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                            // className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                            className={styles['btn-primary']}
                             onClick={onShowAddForm}
                         >
                             Add Clip
                         </button>
                         <button 
-                            className="cursor-pointer p-4 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300"
+                            // className="cursor-pointer p-4 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300"
+                            className={styles['btn-danger']}
                             onClick={handleLogoutClick}
                         >
                             Logout
@@ -46,13 +51,15 @@ export default function Header({ onShowAddForm, onSearch } : HeaderProps) {
                 ) : (
                     <>
                         <button 
-                            className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                            // className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                            className={styles['btn-primary']}
                             onClick={handleLoginClick}
                         >
                             Login
                         </button>
                         <button 
-                            className="cursor-pointer p-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-colors duration-300"
+                            // className="cursor-pointer p-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-colors duration-300"
+                            className={styles['btn-primary']}
                             onClick={handleRegisterClick}
                         >
                             Register

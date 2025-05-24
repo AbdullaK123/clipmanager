@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { RegisterFormInput } from '@/app/lib/interfaces'
 import Header from '../components/Header'
+import styles from '@/app/styles/styles.json'
+import { cx } from '../lib/utils'
 
 
 export default function RegisterPage() {
@@ -139,7 +141,11 @@ export default function RegisterPage() {
                     />
                 </div>
                 <button
-                    className="w-full cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                    // className="w-full cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                    className={cx([
+                        'w-full',
+                        styles['btn-primary']
+                    ])}
                     onClick={handleSubmit}
                 >
                     Register

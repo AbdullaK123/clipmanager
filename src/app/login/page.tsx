@@ -4,6 +4,8 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { LoginFormInput } from '@/app/lib/interfaces'
 import Header from '../components/Header'
+import styles from '@/app/styles/styles.json'
+import { cx } from '../lib/utils'
 
 export default function LoginPage() {
     const [loginData, setLoginData] = useState<LoginFormInput>({
@@ -110,7 +112,11 @@ export default function LoginPage() {
                     />
                 </div>
                 <button
-                    className="w-full cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
+                    // 
+                    className={cx([
+                        'w-full',
+                        styles['btn-primary']
+                    ])}
                     onClick={handleFormSubmit}
                 >
                     Login
