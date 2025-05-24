@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { KnowledgeClip, AddClipFormProps } from "../lib/interfaces";
 import '@mdxeditor/editor/style.css'
+import styles from '@/app/styles/styles.json'
+import { cx } from "../lib/utils";
 import {
   headingsPlugin,
   listsPlugin,
@@ -149,7 +151,10 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
                     id="title"
                     type="text"
                     name="title"
-                    className='p-4 border rounded-lg shadow-md border-blue-500'
+                    className={cx([
+                        styles['input-base'],
+                        styles['input-default']
+                    ])}
                     value={clipInfo.title}
                     onChange={handleOnTitleOrContentChange}
                     placeholder="Title..."
@@ -173,7 +178,10 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
                 <input
                     type="text"
                     id="tagInput"
-                    className="p-4 border rounded-lg shadow-md border-blue-500"
+                    className={cx([
+                        styles['input-base'],
+                        styles['input-default']
+                    ])}
                     value={tagContext}
                     onChange={handleOnTagChange}
                     onKeyDown={handleOnKeyDown}
@@ -201,7 +209,11 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
                 </div>
             </div>
             <button 
-                className={`w-full ${clipInfo.title.trim() ? 'cursor-pointer' : 'bg-gray-400 cursor-not-allowed'} p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300`}
+                className={cx([
+                    'w-full',
+                    `${clipInfo.title.trim() ? 'cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`,
+                    styles['btn-primary']
+                ])}
                 onClick={() => handleOnSubmit()}
             >
                 {isUpdating ? "Update" : "Add"}

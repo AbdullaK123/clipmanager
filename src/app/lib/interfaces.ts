@@ -39,8 +39,8 @@ export interface LoginFormInput {
 }
 
 export interface HeaderProps {
-    onShowAddForm: () => void;
-    onSearch: (query : string) => void;
+    onShowAddForm?: () => void;
+    onSearch?: (query : string) => void;
 }
 
 export interface SearchBarProps {

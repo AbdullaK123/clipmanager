@@ -28,7 +28,7 @@ export default function Header({ onShowAddForm, onSearch } : HeaderProps) {
             <h1 className="text-xl font-bold">
                 Clip Manager
             </h1>
-            {(path === "/") && <SearchBar onSearch={onSearch} />}
+            {(path === "/") && (onSearch) && <SearchBar onSearch={onSearch} />}
             <div className="flex flex-row gap-4 items-center">
                 {status === 'authenticated' ? (
                     <>
