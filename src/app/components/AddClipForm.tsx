@@ -212,21 +212,11 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
                     {clipInfo.tags.map((tag, index) => (
                         <span
                             key={index}
-                            className={cx([
-                                getStyle('spacing.padding.xs', styles),
-                                getStyle('colors.background.info', styles),
-                                getStyle('colors.text.white', styles),
-                                'rounded-lg',
-                                getStyle('effects.shadows.default', styles),
-                                getStyle('effects.transitions.normal', styles)
-                            ])}
+                            className={getStyle('tags.variants.removable', styles)}
                         >
                             <button 
                                 className={cx([
-                                    'cursor-pointer font-bold',
-                                    getStyle('spacing.padding.xs', styles),
-                                    getStyle('colors.background.info', styles),
-                                    getStyle('colors.text.white', styles)
+                                    'cursor-pointer font-bold mr-2'
                                 ])}
                                 onClick={() => {
                                 setClipInfo({
@@ -234,7 +224,7 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
                                     tags: clipInfo.tags.filter((t) => t !== tag)
                                 })
                             }}>
-                                {'X'}
+                                {'×'}
                             </button>
                             {tag}
                         </span>
