@@ -1,47 +1,61 @@
 import { ClipCardProps } from '@/app/lib/interfaces';
 import ReactMarkdown from 'react-markdown'
 import styles from '@/app/styles/styles.json'
-import { cx } from '../lib/utils';
+import { cx, getStyle } from '../lib/utils';
 
 export default function ClipCard({clip, onRemove, onShowUpdateForm}: ClipCardProps) {
 
     return (
         <div className={cx([
-            styles['flex-col-container'],
-            styles['items-stretched'],
-            styles['space-md'],
-            styles['card-base'],
-            styles['card-elevated']
+            getStyle('layout.flex.col', styles),
+            getStyle('layout.flex.stretch', styles),
+            getStyle('spacing.stacks.normal', styles),
+            getStyle('cards.base', styles),
+            getStyle('cards.variants.elevated', styles)
         ])}>
-            <div className='flex justify-end'>
-                <div className='flex flex-row gap-4 items-center'>
+            <div className={cx([
+                'flex justify-end'
+            ])}>
+                <div className={cx([
+                    getStyle('layout.flex.row', styles),
+                    getStyle('spacing.gaps.sm', styles),
+                    'items-center'
+                ])}>
                     <button 
-                        className={styles['btn-secondary']}
+                        className={getStyle('buttons.variants.secondary', styles)}
                         onClick={() => onShowUpdateForm(clip.id)}
                     >
                         Update
                     </button>
                     <button 
-                        className={styles['btn-danger']}
+                        className={getStyle('buttons.variants.danger', styles)}
                         onClick={() => onRemove(clip.id)}
                     >
                         Delete
                     </button>
                 </div>
             </div>
-            <h1 className='text-3xl font-bold break-words'>
+            <h1 className={cx([
+                getStyle('typography.headings.h1', styles),
+                'break-words'
+            ])}>
                 {clip.title}
             </h1>
-            <p className='text-xl text-left prose w-full overflow-hidden break-words'>
+            <div className={cx([
+                getStyle('typography.body.large', styles),
+                'text-left prose w-full overflow-hidden break-words'
+            ])}>
                 <ReactMarkdown>
                     {clip.content}
                 </ReactMarkdown>
-            </p>
-            <div className='flex flex-wrap items-center justify-center gap-4'>
+            </div>
+            <div className={cx([
+                'flex flex-wrap items-center justify-center',
+                getStyle('spacing.gaps.sm', styles)
+            ])}>
                 {clip.tags.map((tag, index) => (
                     <span
-                        // className='bg-gray-700 text-white p-2.5 italic rounded-full' 
-                        className={styles['tag-muted']}
+                        className={getStyle('tags.variants.muted', styles)}
                         key={index}
                     >
                         {tag}

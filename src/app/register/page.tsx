@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { RegisterFormInput } from '@/app/lib/interfaces'
 import Header from '../components/Header'
 import styles from '@/app/styles/styles.json'
-import { cx } from '../lib/utils'
+import { cx, getStyle } from '../lib/utils'
 
 
 export default function RegisterPage() {
@@ -21,13 +21,13 @@ export default function RegisterPage() {
 
     const getErrorSpan = (message: string) => {
         return (
-            <span className="text-red-500">{message}</span>
+            <span className={getStyle('colors.text.error', styles)}>{message}</span>
         )
     }
 
     const getSuccessSpan = (message: string) => {
         return (
-            <span className="text-green-500">{message}</span>
+            <span className={getStyle('colors.text.success', styles)}>{message}</span>
         )
     }
 
@@ -90,68 +90,96 @@ export default function RegisterPage() {
     return (
         <>
             <Header />
-            <div className="border border-gray-500 rounded-lg shadow-md mt-10 p-4 flex flex-col items-center justify-center mx-auto w-1/4 h-3/5">
-                <h1 className='text-3xl font-bold'>Register</h1>
-                <div className='flex flex-col gap-4 p-4 w-full'>
-                    <label htmlFor='name'>Name: </label>
+            <div className={cx([
+                getStyle('app-specific.auth-form', styles),
+                'mt-10'
+            ])}>
+                <h1 className={getStyle('typography.headings.h1', styles)}>Register</h1>
+                <div className={getStyle('forms.patterns.group', styles)}>
+                    <label htmlFor='name' className={getStyle('typography.utility.label', styles)}>
+                        Name: 
+                    </label>
                     <input
                         type='text'
                         id='name'
                         name='name'
-                        className='p-4 border rounded-lg shadow-md border-blue-500'
+                        className={cx([
+                            getStyle('inputs.base', styles),
+                            getStyle('inputs.variants.default', styles),
+                            getStyle('effects.shadows.default', styles)
+                        ])}
                         value={formData.name}
                         onChange={handleOnChange}
                         placeholder='Name...'
                     />
                 </div>
-                <div className='flex flex-col gap-4 p-4 w-full'>
-                    <label htmlFor="email">Email: </label>
+                <div className={getStyle('forms.patterns.group', styles)}>
+                    <label htmlFor="email" className={getStyle('typography.utility.label', styles)}>
+                        Email: 
+                    </label>
                     <input 
                         type='email'
                         id='email'
                         name='email'
-                        className='p-4 border rounded-lg shadow-md border-blue-500'
+                        className={cx([
+                            getStyle('inputs.base', styles),
+                            getStyle('inputs.variants.default', styles),
+                            getStyle('effects.shadows.default', styles)
+                        ])}
                         value={formData.email}
                         onChange={handleOnChange}
                         placeholder='Email...'
                     />
                 </div>
-                <div className='flex flex-col gap-4 p-4 w-full'>
-                    <label htmlFor="password">Password: </label>
+                <div className={getStyle('forms.patterns.group', styles)}>
+                    <label htmlFor="password" className={getStyle('typography.utility.label', styles)}>
+                        Password: 
+                    </label>
                     <input 
                         type='password'
                         id='password'
                         name='password'
-                        className='p-4 border rounded-lg shadow-md border-blue-500'
+                        className={cx([
+                            getStyle('inputs.base', styles),
+                            getStyle('inputs.variants.default', styles),
+                            getStyle('effects.shadows.default', styles)
+                        ])}
                         value={formData.password}
                         onChange={handleOnChange}
                         placeholder='Password...'
                     />
                 </div>
-                <div className='flex flex-col gap-4 p-4 w-full'>
-                    <label htmlFor="confirmedPassword">Confirm Password: </label>
+                <div className={getStyle('forms.patterns.group', styles)}>
+                    <label htmlFor="confirmedPassword" className={getStyle('typography.utility.label', styles)}>
+                        Confirm Password: 
+                    </label>
                     <input 
                         type='password'
                         id='confirmedPassword'
                         name='confirmedPassword'
-                        className='p-4 border rounded-lg shadow-md border-blue-500'
+                        className={cx([
+                            getStyle('inputs.base', styles),
+                            getStyle('inputs.variants.default', styles),
+                            getStyle('effects.shadows.default', styles)
+                        ])}
                         value={formData.confirmedPassword}
                         onChange={handleOnChange}
                         placeholder='Confirm Password...'
                     />
                 </div>
                 <button
-                    // className="w-full cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
                     className={cx([
                         'w-full',
-                        styles['btn-primary']
+                        getStyle('buttons.variants.primary', styles)
                     ])}
                     onClick={handleSubmit}
                 >
                     Register
                 </button>
-                {successMessage && getSuccessSpan(successMessage)}
-                {isError && getErrorSpan(errorMessage)}
+                <div className="mt-4 text-center h-6">
+                    {successMessage && getSuccessSpan(successMessage)}
+                    {isError && getErrorSpan(errorMessage)}
+                </div>
             </div>
         </>
     )

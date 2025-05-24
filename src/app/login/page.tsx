@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { LoginFormInput } from '@/app/lib/interfaces'
 import Header from '../components/Header'
 import styles from '@/app/styles/styles.json'
-import { cx } from '../lib/utils'
+import { cx, getStyle } from '../lib/utils'
 
 export default function LoginPage() {
     const [loginData, setLoginData] = useState<LoginFormInput>({
@@ -26,13 +26,13 @@ export default function LoginPage() {
 
     const getSuccessSpan = (message: string) => {
         return (
-            <span className="text-green-500">{message}</span>
+            <span className={getStyle('colors.text.success', styles)}>{message}</span>
         )
     }
 
     const getErrorSpan = (message: string) => {
         return (
-            <span className="text-red-500">{message}</span>
+            <span className={getStyle('colors.text.error', styles)}>{message}</span>
         )
     }
 
@@ -85,43 +85,59 @@ export default function LoginPage() {
     return (
         <>
             <Header />
-            <div className="border border-gray-500 rounded-lg shadow-md mt-10 p-6 flex flex-col items-center justify-center mx-auto w-min-[320px] w-1/4 h-3/5">
-                <h1 className='text-3xl font-bold'>Login</h1>
-                <div className='flex flex-col gap-4 p-4 w-full'>
-                    <label htmlFor="email">Email: </label>
+            <div className={cx([
+                getStyle('app-specific.auth-form', styles),
+                'mt-10'
+            ])}>
+                <h1 className={getStyle('typography.headings.h1', styles)}>Login</h1>
+                <div className={getStyle('forms.patterns.group', styles)}>
+                    <label htmlFor="email" className={getStyle('typography.utility.label', styles)}>
+                        Email: 
+                    </label>
                     <input 
                         type='email'
                         id='email'
                         name='email'
-                        className='p-4 border rounded-lg shadow-md border-blue-500'
+                        className={cx([
+                            getStyle('inputs.base', styles),
+                            getStyle('inputs.variants.default', styles),
+                            getStyle('effects.shadows.default', styles)
+                        ])}
                         value={loginData.email}
                         onChange={handleOnChange}
                         placeholder='Email...'
                     />
                 </div>
-                <div className='flex flex-col gap-4 p-4 w-full'>
-                    <label htmlFor="password">Password: </label>
+                <div className={getStyle('forms.patterns.group', styles)}>
+                    <label htmlFor="password" className={getStyle('typography.utility.label', styles)}>
+                        Password: 
+                    </label>
                     <input 
                         type='password'
                         id='password'
                         name='password'
-                        className='p-4 border rounded-lg shadow-md border-blue-500'
+                        className={cx([
+                            getStyle('inputs.base', styles),
+                            getStyle('inputs.variants.default', styles),
+                            getStyle('effects.shadows.default', styles)
+                        ])}
                         value={loginData.password}
                         onChange={handleOnChange}
                         placeholder='Password...'
                     />
                 </div>
                 <button
-                    // 
                     className={cx([
                         'w-full',
-                        styles['btn-primary']
+                        getStyle('buttons.variants.primary', styles)
                     ])}
                     onClick={handleFormSubmit}
                 >
                     Login
                 </button>
-                <div className="mt-4 text-center h-6"> {/* Fixed height for message area to prevent layout shift */}
+                <div className={cx([
+                    'mt-4 text-center h-6'
+                ])}>
                     {successMessage && getSuccessSpan(successMessage)}
                     {isError && getErrorSpan(errorMessage)}
                 </div>

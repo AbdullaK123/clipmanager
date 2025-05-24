@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import Modal from "./components/Modal";
 import { useRequireAuth } from './lib/auth-utils';
 import { Document } from "flexsearch"
+import styles from '@/app/styles/styles.json'
+import { cx, getStyle } from "./lib/utils";
 
 export default function Home() {
   // This will redirect to login if not authenticated
@@ -45,9 +47,7 @@ export default function Home() {
     }
   }, [status])
 
-
   useEffect(() => {
-
     if (clips.length > 0) {
       const searchIndex = new Document({
         document: {
@@ -67,7 +67,6 @@ export default function Home() {
 
       setIndex(searchIndex)
     }
-
   }, [clips])
 
   useEffect(() => {
@@ -75,7 +74,6 @@ export default function Home() {
   }, [clips])
 
   const onSearch = (query:string) => {
-
     if (!query.trim() || !index) {
       setFilteredClips(clips)
       return
@@ -83,7 +81,6 @@ export default function Home() {
 
     try {
       const results = index.search(query);
-
       const matchingIds = new Set();
 
       if (Array.isArray(results)) {
@@ -95,7 +92,6 @@ export default function Home() {
       }
 
       const matchingClips = Array.from(matchingIds).map(id => clips.find((clip) => clip.id === id)).filter(Boolean) as KnowledgeClip[]
-
       setFilteredClips(matchingClips)
     } catch (err) {
       console.warn(`Failed to search: ${err instanceof Error ? err.message : err}`)
@@ -178,7 +174,6 @@ export default function Home() {
               body: JSON.stringify(newClipInfo)
           });
 
-          // Now try to parse as JSON
           const responseData = await response.json(); 
           
           if (response.ok && responseData.clip) {
@@ -225,7 +220,14 @@ export default function Home() {
 
   // Show loading state when checking authentication
   if (status === 'loading') {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className={cx([
+        'flex items-center justify-center min-h-screen',
+        getStyle('typography.body.default', styles)
+      ])}>
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -234,7 +236,11 @@ export default function Home() {
         onShowAddForm={onShowAddForm}
         onSearch={onSearch}
       />
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center justify-center gap-4 p-6'>
+      <div className={cx([
+        getStyle('layout.grids.cards', styles),
+        'items-center justify-center',
+        getStyle('spacing.padding.md', styles)
+      ])}>
         <Modal
           isOpen={isModalVisible}
           onClose={() => setIsModalVisible(false)}
@@ -259,7 +265,11 @@ export default function Home() {
               onShowUpdateForm={onShowAddFormIfUpdating}
             />
           )
-        }) : <p>{clips.length === 0 ? 'No clips yet' : 'No clips match your search'}</p>}
+        }) : (
+          <p className={getStyle('typography.body.default', styles)}>
+            {clips.length === 0 ? 'No clips yet' : 'No clips match your search'}
+          </p>
+        )}
       </div>
     </>
   );

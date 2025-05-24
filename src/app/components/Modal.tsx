@@ -1,4 +1,6 @@
 import { ModalProps } from "../lib/interfaces";
+import styles from '@/app/styles/styles.json'
+import { getStyle } from "../lib/utils";
 
 export default function Modal({ children, onClose, isOpen } : ModalProps) {
     
@@ -6,10 +8,10 @@ export default function Modal({ children, onClose, isOpen } : ModalProps) {
 
     return (
         <div 
-            className="fixed inset-0 flex items-center justify-center z-50"
+            className={getStyle('components.modals.backdrop', styles)}
         >
             <div
-                className="bg-black bg-opacity-50 fixed inset-0 flex items-center justify-center"
+                className={getStyle('components.modals.backdrop', styles)}
                 onClick={onClose}
             >
                 {children}

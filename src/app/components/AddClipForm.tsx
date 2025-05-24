@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { KnowledgeClip, AddClipFormProps } from "../lib/interfaces";
 import '@mdxeditor/editor/style.css'
 import styles from '@/app/styles/styles.json'
-import { cx } from "../lib/utils";
+import { cx, getStyle } from "../lib/utils";
 import {
   headingsPlugin,
   listsPlugin,
@@ -144,31 +144,35 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
 
     return (
         <div className={cx([
-            styles['flex-col-container'],
-            styles['items-centered'],
-            'max-h-screen',
-            'overflow-y-scroll',
-            'min-w-[320px]',
-            'w-[640px]',
-            styles['card-base']
+            getStyle('layout.flex.col', styles),
+            getStyle('spacing.gaps.sm', styles),
+            'max-h-screen overflow-y-scroll min-w-[320px] w-[640px]',
+            getStyle('cards.base', styles)
         ])}>
-            <h1 className="text-3xl font-bold">{isUpdating ? "Updating Clip!" : "Add a Clip!"}</h1>
-            <div className="flex flex-col gap-4 p-4 w-full">
-                <label htmlFor="title" >Title: </label>
+            <h1 className={getStyle('typography.headings.h1', styles)}>
+                {isUpdating ? "Updating Clip!" : "Add a Clip!"}
+            </h1>
+            <div className={getStyle('forms.patterns.group', styles)}>
+                <label htmlFor="title" className={getStyle('typography.utility.label', styles)}>
+                    Title: 
+                </label>
                 <input
                     id="title"
                     type="text"
                     name="title"
                     className={cx([
-                        styles['input-base'],
-                        styles['input-default']
+                        getStyle('inputs.base', styles),
+                        getStyle('inputs.variants.default', styles)
                     ])}
                     value={clipInfo.title}
                     onChange={handleOnTitleOrContentChange}
                     placeholder="Title..."
                 />
             </div>
-            <div className="flex flex-col gap-4 p-4 w-full">
+            <div className={cx([
+                getStyle('forms.patterns.group', styles),
+                'w-full'
+            ])}>
                 <MDXEditor
                     markdown={""}
                     ref={editorRef}
@@ -176,33 +180,54 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
                     onChange={(newMarkdown) => {
                         setClipInfo((prev) => ({...prev, content: newMarkdown}))
                     }}
-                    className="min-h-[200px] border rounded-lg p-2 shadow-sm border-gray-300 focus-within:border-blue-500 focus-within:ring-blue-500"
+                    className={cx([
+                        'min-h-[200px] border rounded-lg p-2',
+                        getStyle('effects.shadows.subtle', styles),
+                        'border-gray-300 focus-within:border-blue-500 focus-within:ring-blue-500'
+                    ])}
                     contentEditableClassName="prose"
                     placeholder="Enter your clip content in Markdown..."
                 />
             </div>
-            <div className="flex flex-col gap-4 p-4 w-full">
-                <label htmlFor="tagInput" >Tags: </label>
+            <div className={getStyle('forms.patterns.group', styles)}>
+                <label htmlFor="tagInput" className={getStyle('typography.utility.label', styles)}>
+                    Tags: 
+                </label>
                 <input
                     type="text"
                     id="tagInput"
                     className={cx([
-                        styles['input-base'],
-                        styles['input-default']
+                        getStyle('inputs.base', styles),
+                        getStyle('inputs.variants.default', styles)
                     ])}
                     value={tagContext}
                     onChange={handleOnTagChange}
                     onKeyDown={handleOnKeyDown}
                     placeholder="Tags..."
                 />
-                <div className="flex flex-wrap items-center justify-center gap-4">
+                <div className={cx([
+                    'flex flex-wrap items-center justify-center',
+                    getStyle('spacing.gaps.sm', styles)
+                ])}>
                     {clipInfo.tags.map((tag, index) => (
                         <span
                             key={index}
-                            className="p-2 bg-red-500 text-white rounded-lg shadow-md transition-colors duration-300"
+                            className={cx([
+                                getStyle('spacing.padding.xs', styles),
+                                getStyle('colors.background.info', styles),
+                                getStyle('colors.text.white', styles),
+                                'rounded-lg',
+                                getStyle('effects.shadows.default', styles),
+                                getStyle('effects.transitions.normal', styles)
+                            ])}
                         >
                             <button 
-                                className="cursor-pointer font-bold p-2 bg-red-500 text-white"
+                                className={cx([
+                                    'cursor-pointer font-bold',
+                                    getStyle('spacing.padding.xs', styles),
+                                    getStyle('colors.background.info', styles),
+                                    getStyle('colors.text.white', styles)
+                                ])}
                                 onClick={() => {
                                 setClipInfo({
                                     ...clipInfo,
@@ -219,8 +244,13 @@ export default function AddClipForm({ handleSubmit, handleSubmitIfUpdating, isUp
             <button 
                 className={cx([
                     'w-full',
-                    `${clipInfo.title.trim() ? 'cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`,
-                    styles['btn-primary']
+                    clipInfo.title.trim() ? 
+                        getStyle('buttons.variants.primary', styles) : 
+                        cx([
+                            'bg-gray-400 cursor-not-allowed',
+                            getStyle('spacing.padding.md', styles),
+                            'rounded-lg font-semibold'
+                        ])
                 ])}
                 onClick={() => handleOnSubmit()}
             >

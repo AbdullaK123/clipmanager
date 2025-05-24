@@ -5,6 +5,7 @@ import { HeaderProps } from "../lib/interfaces";
 import SearchBar from "./SearchBar";
 import styles from '@/app/styles/styles.json'
 import { usePathname } from "next/navigation";
+import { cx, getStyle } from "../lib/utils";
 
 export default function Header({ onShowAddForm, onSearch } : HeaderProps) {
     const path = usePathname();
@@ -24,25 +25,35 @@ export default function Header({ onShowAddForm, onSearch } : HeaderProps) {
     };
     
     return (
-        <nav className="mb-8 p-4 bg-white flex flex-row justify-between items-center shadow-md sticky top-0">
-            <h1 className="text-xl font-bold">
+        <nav className={cx([
+            getStyle('app-specific.page-header', styles),
+            getStyle('components.toolbar', styles)
+        ])}>
+            <h1 className={getStyle('typography.headings.h4', styles)}>
                 Clip Manager
             </h1>
             {(path === "/") && (onSearch) && <SearchBar onSearch={onSearch} />}
-            <div className="flex flex-row gap-4 items-center">
+            <div className={cx([
+                getStyle('layout.flex.row', styles),
+                getStyle('spacing.gaps.sm', styles),
+                'items-center'
+            ])}>
                 {status === 'authenticated' ? (
                     <>
-                        <span className="p-2">Welcome, {session.user.name || session.user.email}</span>
+                        <span className={cx([
+                            getStyle('spacing.padding.xs', styles),
+                            getStyle('colors.text.secondary', styles)
+                        ])}>
+                            Welcome, {session.user.name || session.user.email}
+                        </span>
                         <button 
-                            // className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
-                            className={styles['btn-primary']}
+                            className={getStyle('buttons.variants.primary', styles)}
                             onClick={onShowAddForm}
                         >
                             Add Clip
                         </button>
                         <button 
-                            // className="cursor-pointer p-4 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-colors duration-300"
-                            className={styles['btn-danger']}
+                            className={getStyle('buttons.variants.danger', styles)}
                             onClick={handleLogoutClick}
                         >
                             Logout
@@ -51,15 +62,13 @@ export default function Header({ onShowAddForm, onSearch } : HeaderProps) {
                 ) : (
                     <>
                         <button 
-                            // className="cursor-pointer p-4 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-300"
-                            className={styles['btn-primary']}
+                            className={getStyle('buttons.variants.primary', styles)}
                             onClick={handleLoginClick}
                         >
                             Login
                         </button>
                         <button 
-                            // className="cursor-pointer p-4 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-colors duration-300"
-                            className={styles['btn-primary']}
+                            className={getStyle('buttons.variants.primary', styles)}
                             onClick={handleRegisterClick}
                         >
                             Register
