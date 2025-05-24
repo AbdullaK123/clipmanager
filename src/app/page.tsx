@@ -8,6 +8,7 @@ import Modal from "./components/Modal";
 import { useRequireAuth } from './lib/auth-utils';
 import { Document } from "flexsearch"
 import { title } from "process";
+import { AnyARecord } from "dns";
 
 export default function Home() {
   // This will redirect to login if not authenticated
@@ -71,14 +72,37 @@ export default function Home() {
 
   }, [clips])
 
+  useEffect(() => {
+    setFilteredClips(clips)
+  }, [clips])
+
   const onSearch = (query:string) => {
 
-    const results = index?.search(query)
+    if (!query.trim() || !index) {
+      setFilteredClips(clips)
+      return
+    }
 
-    const matches = results?.forEach((result) => result.result)
+    try {
+      const results = index.search(query);
 
-    console.log(matches)
+      const matchingIds = new Set();
 
+      if (Array.isArray(results)) {
+          results.map((result : any) => {
+            if (result && result.result) {
+              result.result.forEach((id : string) => matchingIds.add(id))
+            }
+        })
+      }
+
+      const matchingClips = Array.from(matchingIds).map(id => clips.find((clip) => clip.id === id)).filter(Boolean) as KnowledgeClip[]
+
+      setFilteredClips(matchingClips)
+    } catch (err) {
+      console.warn(`Failed to search: ${err instanceof Error ? err.message : err}`)
+      setFilteredClips(clips)
+    }
   }
 
   const onAddClip = async (clip: Omit<KnowledgeClip,'id'> ) => {
@@ -228,7 +252,7 @@ export default function Home() {
             />
           </div>
         </Modal>
-        {(clips.length > 0) ? clips.map((clip) => {
+        {(filteredClips.length > 0) ? filteredClips.map((clip) => {
           return (
             <ClipCard
               key={clip.id}
@@ -237,7 +261,7 @@ export default function Home() {
               onShowUpdateForm={onShowAddFormIfUpdating}
             />
           )
-        }) : <p>No clips yet...</p>}
+        }) : <p>{clips.length === 0 ? 'No clips yet' : 'No clips match your search'}</p>}
       </div>
     </>
   );
