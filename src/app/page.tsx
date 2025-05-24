@@ -239,7 +239,6 @@ export default function Home() {
       <div className={cx([
         getStyle('layout.grids.cards', styles),
         'items-center justify-center',
-        getStyle('colors.background.surface', styles),
         getStyle('spacing.padding.md', styles)
       ])}>
         <Modal

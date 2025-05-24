@@ -29,8 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cx([
-          `${geistSans.variable} ${geistMono.variable} antialiased`,
-          getStyle('colors.background.surface', styles)
+          `${geistSans.variable} ${geistMono.variable} antialiased`
         ])}
       >
         <AuthProvider>
